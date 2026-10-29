@@ -31,7 +31,27 @@ main{max-width:520px;padding:24px 18px 55px}.grid{grid-template-columns:1fr;gap:
 .orb.exploded{background:#ff525e!important;border-color:#ff525e!important;color:#fff!important}
 @media(max-width:390px){.entry .entry-player{min-width:89px;font-size:11px}.bomb-row{gap:4px}.bomb-row .bomb-total,.bomb-row .bomb-diff{font-size:12px}}
 .bomb-icon{display:block;width:38px;height:38px;color:#f4f3fa;stroke:#f4f3fa;flex:none}.card .symbol:has(.bomb-icon){display:flex;align-items:center;justify-content:center}
-</style></head><body><main>
+
+/* PiTIME unified entrance — keeps the original local game intact */
+body:not(.play-local) > main{display:none}
+body.play-local #modeGateway{display:none}
+#modeGateway{max-width:520px;margin:0 auto;padding:24px 18px 52px;min-height:100dvh}
+.gate-languages{display:flex;justify-content:flex-end;gap:4px;margin-bottom:35px}
+.gate-languages button{border:0;background:transparent;color:#b5b7c1;padding:7px 10px;font-weight:700;cursor:pointer;border-radius:8px}
+.gate-languages button.chosen{color:#e7ff59;background:#272b22}
+.gate-brand{font-size:clamp(43px,10vw,55px);margin:0 0 10px;letter-spacing:-.07em;font-weight:900}
+.gate-brand span{color:#e7ff59}
+.gate-subtitle{color:#a9acba;font-size:14px;line-height:1.7;margin:0 0 42px}
+.gate-card{display:flex;align-items:center;text-decoration:none;gap:17px;color:#fff;background:#191b1f;border:1px solid #383d43;border-radius:18px;padding:24px 20px;margin:13px 0;min-height:118px;transition:background .15s,border-color .15s}
+.gate-card:hover,.gate-card:focus-visible{background:#23262b;border-color:#e7ff59}
+.gate-icon{font-size:30px;color:#f4f3fa;width:43px;text-align:center;flex:none}
+.gate-info{flex:1;min-width:0}.gate-info strong{display:block;color:#e7ff59;font-size:20px;margin-bottom:6px}.gate-info small{color:#b5b7c1;font-size:12px;line-height:1.6;display:block}
+.gate-arrow{color:#e7ff59;font-size:22px}
+.gate-footer{margin-top:38px;text-align:center;font-size:12px;color:#777e90}
+.local-mode-back{display:inline-block;background:none;border:0;color:#a9acba;font-size:12px;padding:9px 0;cursor:pointer;text-decoration:none}
+</style><script>if(new URLSearchParams(location.search).get("mode")==="local")document.documentElement.classList.add("local-mode-start");</script></head><body><script>if(new URLSearchParams(location.search).get('mode')==='local')document.body.classList.add('play-local');</script>
+<section id="modeGateway" aria-label="Play mode"><div class="gate-languages"><button type="button" id="gateJa" class="chosen">日本語</button><button type="button" id="gateEn">EN</button></div><h1 class="gate-brand" id="gateBrand">ぴた<span>秒</span></h1><p class="gate-subtitle" id="gateSubtitle">時間の感覚で遊ぼう。遊び方を選んでね！</p><a class="gate-card" href="./?mode=local" id="gateLocal"><span class="gate-icon">◎</span><span class="gate-info"><strong id="gateLocalTitle">ローカルで遊ぶ</strong><small id="gateLocalDesc">1台のスマホ・PCで順番に遊ぶ。4つのゲームが楽しめるよ。</small></span><span class="gate-arrow">›</span></a><a class="gate-card" href="./online.html" id="gateOnline"><span class="gate-icon">◉</span><span class="gate-info"><strong id="gateOnlineTitle">オンラインで遊ぶ</strong><small id="gateOnlineDesc">それぞれの端末からルームに参加。友達と一緒に遊ぼう！</small></span><span class="gate-arrow">›</span></a><p class="gate-footer" id="gateFooter">PiTIME · Choose your play mode</p></section>
+<main><a href="./" class="local-mode-back" id="localBackToMode">← 遊び方を選ぶ</a>
 <div class="lang-switch" aria-label="Language"><button type="button" id="langJa" class="selected">日本語</button><button type="button" id="langEn">EN</button></div>
 <section class="screen active" id="home"><h1 id="brandTitle">Pi<span class="lime">TIME</span></h1><div class="grid" id="games">
 <button class="card" data-game="solo"><div class="symbol">◎</div><div class="card-copy"><div class="card-heading"><h2 data-t="soloTitle"></h2><span class="mode" data-t="soloMode"></span></div><p data-t="soloDesc"></p></div></button>
@@ -74,4 +94,9 @@ logs.push({player:index+1,time:elapsed});$('time').textContent='';$('timeCaption
 function results(){clean();$('resultList').replaceChildren();$('resultTitle').textContent=game==='bomb'?t().bombTitle:t().rankingTitle;let rows;if(game==='multi'){rows=[...logs].sort((a,b)=>Math.abs(a.time-target)-Math.abs(b.time-target));$('resultHint').textContent=t().multiResultHint(target.toFixed(1))}else{rows=logs;$('resultHint').textContent=t().bombResultHint(target.toFixed(1))}
 rows.forEach((r,i)=>{const e=document.createElement('div');e.className='entry';const a=document.createElement('span');a.className='entry-player';if(game==='bomb'){a.textContent=t().turn(i+1,r.player)+(i===rows.length-1?' 💥':'');const wrap=document.createElement('div');wrap.className='bomb-row';const total=document.createElement('div'),diff=document.createElement('div');total.className='bomb-total';diff.className='bomb-diff';const l=document.createElement('small'),rlabel=document.createElement('small');l.textContent=t().total;rlabel.textContent=t().diff;total.append(l,document.createTextNode(fmt(r.total)+t().second));diff.append(rlabel,document.createTextNode((r.total-target>=0?'+':'')+fmt(r.total-target)+t().second));wrap.append(total,diff);e.append(a,wrap)}else{a.textContent=t().rank(i+1,r.player);const b=document.createElement('strong');b.textContent=t().timeDiff(fmt(r.time),r.time-target);if(i===0)b.className='highlight';e.append(a,b)}$('resultList').append(e)});show('results')}
 document.querySelectorAll('[data-game]').forEach(b=>b.addEventListener('click',()=>setup(b.dataset.game)));document.querySelectorAll('[data-back]').forEach(b=>b.addEventListener('click',()=>{clean();show('home')}));document.querySelectorAll('[data-adjust]').forEach(b=>b.addEventListener('click',()=>adjust(Number(b.dataset.adjust))));$('start').addEventListener('click',begin);$('orb').addEventListener('click',press);$('again').addEventListener('click',begin);$('langJa').addEventListener('click',()=>changeLang('ja'));$('langEn').addEventListener('click',()=>changeLang('en'));renderStatic();
-})();</script></body></html>
+})();</script><script>
+(()=>{const labels={ja:{brand:'ぴた<span>秒</span>',sub:'時間の感覚で遊ぼう。遊び方を選んでね！',local:'ローカルで遊ぶ',localDesc:'1台のスマホ・PCで順番に遊ぶ。4つのゲームが楽しめるよ。',online:'オンラインで遊ぶ',onlineDesc:'それぞれの端末からルームに参加。友達と一緒に遊ぼう！',back:'← 遊び方を選ぶ'},en:{brand:'Pi<span>TIME</span>',sub:'Put your sense of time to the test. Choose how to play!',local:'Play locally',localDesc:'Take turns on one device. Enjoy all four games.',online:'Play online',onlineDesc:'Join the same room on your own devices and play together!',back:'← Choose play mode'}};
+function setGateLanguage(lang){const t=labels[lang];document.getElementById('gateBrand').innerHTML=t.brand;document.getElementById('gateSubtitle').textContent=t.sub;document.getElementById('gateLocalTitle').textContent=t.local;document.getElementById('gateLocalDesc').textContent=t.localDesc;document.getElementById('gateOnlineTitle').textContent=t.online;document.getElementById('gateOnlineDesc').textContent=t.onlineDesc;document.getElementById('localBackToMode').textContent=t.back;document.getElementById('gateJa').classList.toggle('chosen',lang==='ja');document.getElementById('gateEn').classList.toggle('chosen',lang==='en');try{sessionStorage.setItem('pitime-gate-language',lang)}catch(e){}}
+document.getElementById('gateJa').onclick=()=>setGateLanguage('ja');document.getElementById('gateEn').onclick=()=>setGateLanguage('en');try{setGateLanguage(sessionStorage.getItem('pitime-gate-language')==='en'?'en':'ja')}catch(e){setGateLanguage('ja')}
+})();
+</script></body></html>
